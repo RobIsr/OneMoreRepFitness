@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "239807476423",
+    "firebase_url": "https://onemorerepfitness-6f0e5.firebaseio.com",
+    "project_id": "onemorerepfitness-6f0e5",
+    "storage_bucket": "onemorerepfitness-6f0e5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:239807476423:android:318d2ab5418ed919",
+        "android_client_info": {
+          "package_name": "com.example.israelsson.onemorerepfitness"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "239807476423-cho1jtrqh3m8u1qk2qrim294p4ko71iu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.israelsson.onemorerepfitness",
+            "certificate_hash": "195ef1f5bcfc1ecd980755e3d4646b8bfdd8a57b"
+          }
+        },
+        {
+          "client_id": "239807476423-4nclbpbhdkm1220k13p30hr2vlhehjn9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDF4odVv16CTS36BswUdAbz-T6LBeP-hfc"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "239807476423-4nclbpbhdkm1220k13p30hr2vlhehjn9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
