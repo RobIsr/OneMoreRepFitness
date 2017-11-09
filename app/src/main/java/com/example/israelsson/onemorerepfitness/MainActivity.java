@@ -1,6 +1,7 @@
 package com.example.israelsson.onemorerepfitness;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
@@ -17,21 +18,24 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
     private TextView workoutTextView;
     private TextView resetButton;
     private TextView saveButton;
+    private TextView numberOfResults;
     private long timeWhenStopped = 0;
     boolean isTimeActivated = false;
     Chronometer chronometer;
     int position = 0;
     DatabaseReference myRef;
-    List<Workouts> items = new ArrayList<>();
+    DatabaseReference myRefResults;
+    ArrayList<Workouts> items = new ArrayList<>();
+    ArrayList<String> resultList = new ArrayList();
     Workouts value;
 
 
@@ -42,11 +46,26 @@ public class MainActivity extends AppCompatActivity {
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         myRef = database.getReference("workouts");
+        myRefResults = database.getReference("results");
         getFireBaseValues();
 
         workoutTextView = (TextView) findViewById(R.id.workoutTextView);
 
         chronometer = (Chronometer) findViewById(R.id.chronometer3);
+
+
+        numberOfResults = (TextView) findViewById(R.id.number_of_results);
+        getResults();
+
+        numberOfResults.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getBaseContext(), ShowResults.class);
+                intent.putExtra("workout_position", position);
+                startActivity(intent);
+            }
+        });
+
 
         ImageView timingButton = (ImageView) findViewById(R.id.timingButton);
         timingButton.setOnClickListener(new View.OnClickListener() {
@@ -76,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
                 if(position > 0) {
                     position--;
                     getFireBaseValues();
+                    getResults();
                 }
             }
         });
@@ -88,6 +108,7 @@ public class MainActivity extends AppCompatActivity {
                 if (position < items.size() - 1) {
                     position++;
                     getFireBaseValues();
+                    getResults();
                 }
             }
         });
@@ -112,6 +133,16 @@ public class MainActivity extends AppCompatActivity {
                 final Dialog saveDialog = new Dialog(MainActivity.this);
                 saveDialog.setContentView(R.layout.save_dialog);
                 saveDialog.show();
+
+                TextView positiveButton = (TextView) saveDialog.findViewById(R.id.positiveButton);
+                positiveButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        resultList.clear();
+                        setResults();
+                        saveDialog.dismiss();
+                    }
+                });
             }
         });
 
@@ -127,8 +158,7 @@ public class MainActivity extends AppCompatActivity {
                 for (DataSnapshot child : children) {
                     value = child.getValue(Workouts.class);
                     items.add(value);
-                    }
-
+                }
 
                 workoutTextView.setText(items.get(position).getDescription().toUpperCase() + "\n" + items.get(position).getExersize_1() + "\n" + items.get(position).getExersize_2()
                         + "\n" + items.get(position).getExersize_3() + "\n" + items.get(position).getExersize_4());
@@ -142,9 +172,32 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void setResults() {
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm");
         Date date = new Date();
-        Results result = new Results(date.toString(), chronometer.getText().toString());
-        myRef.push().setValue(result);
+        String d = df.format(date);
+        Results result = new Results(chronometer.getText().toString(), d);
+        myRefResults.child(String.valueOf(position)).push().setValue(result);
+    }
+
+
+    public void getResults() {
+        resultList.clear();
+        myRefResults.child(String.valueOf(position)).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Iterable<DataSnapshot> children = dataSnapshot.getChildren();
+                for (DataSnapshot child : children) {
+                    Results results = (Results) dataSnapshot.getValue(Results.class);
+                    resultList.add(0, results.getDate() + "\n\n" + results.getTime());
+                }
+                numberOfResults.setText(String.valueOf(resultList.size()));
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                System.out.println("Error: " + databaseError.getCode());
+            }
+        });
     }
 
 }

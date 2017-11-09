@@ -8,6 +8,10 @@ public class Results {
     String time;
     String date;
 
+    public Results() {
+
+    }
+
     public Results(String time, String date) {
         this.time = time;
         this.date = date;
