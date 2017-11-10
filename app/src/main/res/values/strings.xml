@@ -4,5 +4,11 @@
 
     <string name="workout1_title">5 ROUNDS FOR TIME</string>
     <string name="workout1">10 Clean and jerk "\n" 15 Toes to bar "\n" 10 Burpees "\n" 20 Kb twists</string>
+    <string name="results">Results</string>
+    <string name="reset">Reset</string>
+    <string name="save">Save</string>
+    <string name="content_left_arrow">Left arrow button to navigate back</string>
+    <string name="content_right_arrow">Right arrow button to navigate to next</string>
+    <string name="content_timing">Stopwatch image used to handle timing</string>
 
 </resources>
