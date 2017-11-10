@@ -8,4 +8,11 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="header">
+        <item name="android:layout_alignParentTop">true</item>
+        <item name="android:layout_centerHorizontal">true</item>
+        <item name="android:textColor">@color/SEMI_TRANSPARENT_WHITE</item>
+        <item name="android:textSize">24sp</item>
+    </style>
+
 </resources>
