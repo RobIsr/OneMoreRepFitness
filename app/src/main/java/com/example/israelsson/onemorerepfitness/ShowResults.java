@@ -28,20 +28,31 @@ public class ShowResults extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_results);
 
+        //Get the workout_position from the Intent used to determine which workout is currently selected.
         position = String.valueOf(getIntent().getIntExtra("workout_position", posInt));
         Log.d("Recieved", position);
 
+        //Initialize the FirebaseReference
         database = FirebaseDatabase.getInstance();
         myRefResults = database.getReference().child("results").child(position);
+
+        /*
+        Find the ListView used to display the Results and set the Adapter to the custom result_listview_item
+        and use the resultList ArrayList to provide the content.
+        */
         resultListView = (ListView) findViewById(R.id.RESULT_LIST_VIEW);
         adapter = new ArrayAdapter(this, R.layout.result_listview_item , resultList);
         resultListView.setAdapter(adapter);
 
 
+        /*
+        Get the results for this workout position form Firebase, add them to resultList and notify
+        the adapter.
+         */
         myRefResults.addChildEventListener(new ChildEventListener() {
 
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                Results results = (Results) dataSnapshot.getValue(Results.class);
+                Results results = dataSnapshot.getValue(Results.class);
                 resultList.add(0, results.getDate() + "\n\n" + results.getTime() + "\n");
                 adapter.notifyDataSetChanged();
             }
