@@ -4,9 +4,9 @@
     android:layout_height="match_parent"
     android:background="@android:color/holo_green_light"
     android:orientation="vertical"
-    android:paddingBottom="100dp"
-    android:paddingLeft="100dp"
-    android:paddingRight="100dp"
+    android:paddingBottom="50dp"
+    android:paddingLeft="50dp"
+    android:paddingRight="50dp"
     android:paddingTop="50dp">
 
     <TextView
@@ -16,7 +16,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:text="Results" />
+        android:text="@string/results" />
 
     <ListView
         android:id="@+id/RESULT_LIST_VIEW"
