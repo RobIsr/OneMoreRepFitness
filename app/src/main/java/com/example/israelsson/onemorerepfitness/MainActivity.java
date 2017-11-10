@@ -173,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
                 });
 
                 //If negativeButton is pressed, dissmiss the dialog.
-                final TextView negativeButton = (TextView) findViewById(R.id.negativeButton);
+                final TextView negativeButton = (TextView) saveDialog.findViewById(R.id.negativeButton);
                 negativeButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
