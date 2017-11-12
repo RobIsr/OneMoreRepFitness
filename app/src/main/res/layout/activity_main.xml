@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -14,8 +14,16 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignTop="@+id/nextWorkoutButton"
+        android:layout_marginBottom="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         android:background="@drawable/arrow_left"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginLeft="8dp"
         android:contentDescription="@string/content_left_arrow" />
+
 
     <ImageView
         android:id="@+id/nextWorkoutButton"
@@ -24,24 +32,50 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="8dp"
         android:background="@drawable/right_arrow"
-        android:contentDescription="@string/content_right_arrow" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginRight="8dp"
+        android:contentDescription="@string/content_right_arrow"/>
 
-    <RelativeLayout
-        android:id="@+id/relativeLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_margin="50dp">
+        android:layout_margin="50dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
 
         <TextView
             android:id="@+id/workoutTitleTextView"
             style="@style/header"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/workout_title" />
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="32dp"
+            android:text="@string/workout_title"
+            android:textColor="@color/SEMI_TRANSPARENT_WHITE"
+            android:textSize="24sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/workoutTextView"
@@ -49,21 +83,19 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:gravity="start"
             android:lineSpacingExtra="10sp"
+            android:textAlignment="textStart"
             android:textColor="@android:color/white"
-            android:textSize="18sp" />
-
-        <ImageView
-            android:id="@+id/timingButton"
-            android:layout_width="75dp"
-            android:layout_height="75dp"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:adjustViewBounds="true"
-            android:contentDescription="@string/content_timing"
-            android:cropToPadding="false"
-            android:scaleType="fitXY"
-            app:srcCompat="@android:drawable/ic_menu_recent_history" />
+            android:textSize="18sp"
+            app:layout_constraintBottom_toTopOf="@+id/chronometer3"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/workoutTitleTextView"/>
 
         <Chronometer
             android:id="@+id/chronometer3"
@@ -71,9 +103,14 @@
             android:layout_height="wrap_content"
             android:layout_above="@+id/timingButton"
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="26dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
             android:textColor="@color/SEMI_TRANSPARENT_WHITE"
-            android:textSize="20sp" />
+            android:textSize="24sp"
+            app:layout_constraintBottom_toTopOf="@+id/timingButton"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
             android:id="@+id/number_of_results"
@@ -84,35 +121,63 @@
             android:layout_marginBottom="103dp"
             android:textColor="@android:color/white"
             android:textSize="24sp" />
-    </RelativeLayout>
+    
+        <TextView
+            android:id="@+id/resetButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="Reset"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/timingButton"
+            app:layout_constraintTop_toBottomOf="@+id/chronometer3" />
 
-    <TextView
-        android:id="@+id/resetButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/nextWorkoutButton"
-        android:layout_marginEnd="84dp"
-        android:layout_marginRight="84dp"
-        android:layout_marginTop="85dp"
-        android:layout_toLeftOf="@+id/nextWorkoutButton"
-        android:layout_toStartOf="@+id/nextWorkoutButton"
-        android:text="@string/reset"
-        android:textColor="@android:color/white"
-        android:textSize="18sp"
-        android:visibility="invisible" />
+        <TextView
+            android:id="@+id/saveButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/resetButton"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_toLeftOf="@+id/resetButton"
+            android:layout_toStartOf="@+id/resetButton"
+            android:text="Save"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/timingButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/chronometer3" />
 
-    <TextView
-        android:id="@+id/saveButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/resetButton"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_toLeftOf="@+id/resetButton"
-        android:layout_toStartOf="@+id/resetButton"
-        android:text="@string/save"
-        android:textColor="@android:color/white"
-        android:textSize="18sp"
-        android:visibility="invisible" />
+        <ImageView
+            android:id="@+id/timingButton"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/content_timing"
+            android:cropToPadding="false"
+            android:scaleType="fitXY"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:srcCompat="@android:drawable/ic_menu_recent_history" />
 
-</RelativeLayout>
+
+    </android.support.constraint.ConstraintLayout>
+
+</android.support.constraint.ConstraintLayout>
