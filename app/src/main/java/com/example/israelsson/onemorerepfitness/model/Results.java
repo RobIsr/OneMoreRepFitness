@@ -12,6 +12,10 @@ public class Results {
 
     }
 
+    public Results(String s, String toString, int position) {
+
+    }
+
     public Results(String time, String date) {
         this.time = time;
         this.date = date;

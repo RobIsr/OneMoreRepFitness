@@ -2,9 +2,11 @@ package com.example.israelsson.onemorerepfitness;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.example.israelsson.onemorerepfitness.model.Results;
 import com.google.firebase.database.ChildEventListener;
@@ -15,14 +17,15 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
-public class ShowResults extends AppCompatActivity {
-    ArrayAdapter<String> adapter;
+public class ShowResults extends AppCompatActivity implements ResultsAdapter.OnItemClickHandler {
     FirebaseDatabase database;
     DatabaseReference myRefResults;
     int posInt;
     String position;
     ArrayList<String> resultList = new ArrayList();
     private ListView resultListView;
+    private RecyclerView resultRecyclerView;
+    private ResultsAdapter adapter;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,13 +39,19 @@ public class ShowResults extends AppCompatActivity {
         database = FirebaseDatabase.getInstance();
         myRefResults = database.getReference().child("results").child(position);
 
+        resultRecyclerView = (RecyclerView) findViewById(R.id.rv_results);
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        resultRecyclerView.setLayoutManager(layoutManager);
+        resultRecyclerView.setHasFixedSize(true);
+        adapter = new ResultsAdapter(resultList, this);
+        resultRecyclerView.setAdapter(adapter);
+
         /*
         Find the ListView used to display the Results and set the Adapter to the custom result_listview_item
         and use the resultList ArrayList to provide the content.
         */
-        resultListView = (ListView) findViewById(R.id.RESULT_LIST_VIEW);
-        adapter = new ArrayAdapter(this, R.layout.result_listview_item , resultList);
-        resultListView.setAdapter(adapter);
+
 
 
         /*
@@ -69,5 +78,10 @@ public class ShowResults extends AppCompatActivity {
             public void onCancelled(DatabaseError databaseError) {
             }
         });
+    }
+
+    @Override
+    public void onClick(String result) {
+        Toast.makeText(this, result, Toast.LENGTH_SHORT).show();
     }
 }
