@@ -18,9 +18,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -29,13 +29,15 @@ public class MainActivity extends AppCompatActivity {
     int position = 0;
     DatabaseReference myRef;
     DatabaseReference myRefResults;
-    ArrayList<Workouts> items = new ArrayList<>();
-    ArrayList<String> resultList = new ArrayList();
+    List<Workouts> items = new ArrayList<>();
+    List<Results> resultItems = new ArrayList<>();
     Workouts value;
+    Results resultsValue;
     private TextView workoutTextView;
     private TextView resetButton;
     private TextView saveButton;
-    private TextView numberOfResults;
+    private TextView yesToSave;
+    private TextView resultNumberButton;
     private long timeWhenStopped = 0;
 
     @Override
@@ -43,41 +45,16 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //Itinitialize Firebase References
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        myRef = database.getReference("workouts");
-        myRefResults = database.getReference("results");
-        //Load the workouts from firebase
-        getFireBaseValues();
+        myRef = database.getReference().child("workouts");
+        myRefResults = database.getReference().child("results");
+        getFireBaseWorkouts();
+        getNumberOfResults();
 
         workoutTextView = (TextView) findViewById(R.id.workoutTextView);
+
         chronometer = (Chronometer) findViewById(R.id.chronometer3);
-        numberOfResults = (TextView) findViewById(R.id.number_of_results);
 
-          /*
-          Loads the number of results that are saved for this particular workout and sets the
-          number numberOfResults TextView to that number.
-          */
-        getResults();
-
-          /*
-          When the number is clicked, open ShowResults activity and send int position with the intent
-          so that the right results can be loaded in ShowResults.
-          */
-        numberOfResults.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getBaseContext(), ShowResults.class);
-                intent.putExtra("workout_position", position);
-                startActivity(intent);
-            }
-        });
-
-
-         /*
-         Find the timingButton and set OnClickListener to handle the timing of this workout and make the
-         reset and save TextViews visible.
-         */
         ImageView timingButton = (ImageView) findViewById(R.id.timingButton);
         timingButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -99,43 +76,32 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-         /*
-         Find previousButton and set OnClickListener to handle click to return to the previous workout and load the
-         number of results saved to it.
-         */
         ImageView previousButton = (ImageView) findViewById(R.id.previousWorkoutButton);
         previousButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(position > 0) {
                     position--;
-                    getFireBaseValues();
-                    getResults();
+                    getFireBaseWorkouts();
+                    getNumberOfResults();
                 }
             }
         });
 
 
-        /*
-        Find nextButton and set OnClickListener to handle click to continue to the next Workout and load the
-        number of results saved to it.
-         */
         ImageView nextButton = (ImageView) findViewById(R.id.nextWorkoutButton);
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (position < items.size() - 1) {
                     position++;
-                    getFireBaseValues();
-                    getResults();
+                    getFireBaseWorkouts();
+                    getNumberOfResults();
                 }
             }
         });
 
-        /*
-        Find the resetButton TextView and set OnClickListener to handle click to reset the timing and to hide
-        the reset and timing TextViews.
-         */
+
         resetButton = (TextView) findViewById(R.id.resetButton);
         resetButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -148,10 +114,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        /*
-        Find the saveButton TextView and set OnClickListener to handle click to show the saveDialog with positive
-        and negative buttons.
-         */
         saveButton = (TextView) findViewById(R.id.saveButton);
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -160,37 +122,34 @@ public class MainActivity extends AppCompatActivity {
                 saveDialog.setContentView(R.layout.save_dialog);
                 saveDialog.show();
 
-                //If user clicks yes then save the results to Firebase.
-                final TextView positiveButton = (TextView) saveDialog.findViewById(R.id.positiveButton);
-                positiveButton.setOnClickListener(new View.OnClickListener() {
+                yesToSave = (TextView) saveDialog.findViewById(R.id.negativeButton);
+                yesToSave.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        resultList.clear();
-                        //Push the results to Firebase
                         setResults();
+                        getNumberOfResults();
                         saveDialog.dismiss();
+                        resetButton.setVisibility(View.INVISIBLE);
+                        saveButton.setVisibility(View.INVISIBLE);
                     }
                 });
+            }
+        });
 
-                //If negativeButton is pressed, dissmiss the dialog.
-                final TextView negativeButton = (TextView) saveDialog.findViewById(R.id.negativeButton);
-                negativeButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        saveDialog.dismiss();
-                    }
-                });
+
+        resultNumberButton = (TextView) findViewById(R.id.resultNumberButton);
+
+        resultNumberButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startResults();
             }
         });
 
     }
 
 
-    /*
-    First clears the items ArrayList with Workouts Objects, then loads the workout objects from Firebase and sets them to the
-    items ArrayList.
-     */
-    public void getFireBaseValues() {
+    public void getFireBaseWorkouts() {
         items.clear();
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -200,6 +159,7 @@ public class MainActivity extends AppCompatActivity {
                     value = child.getValue(Workouts.class);
                     items.add(value);
                 }
+
 
                 workoutTextView.setText(items.get(position).getDescription().toUpperCase() + "\n" + items.get(position).getExersize_1() + "\n" + items.get(position).getExersize_2()
                         + "\n" + items.get(position).getExersize_3() + "\n" + items.get(position).getExersize_4());
@@ -212,34 +172,27 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    /*
-    This Method pushes the current date and time plus the time diplayed on the chronometer to Firebase
-    results
-     */
     public void setResults() {
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm");
         Date date = new Date();
-        String d = df.format(date);
-        Results result = new Results(chronometer.getText().toString(), d);
+        Results result = new Results(chronometer.getText().toString(), date.toString(), position);
         myRefResults.child(String.valueOf(position)).push().setValue(result);
     }
 
 
-    /*
-    This method checks how many results that are saved for this particular workout and sets the numberOfResults
-    TextView to this number.
-     */
-    public void getResults() {
-        resultList.clear();
-        myRefResults.child(String.valueOf(position)).addValueEventListener(new ValueEventListener() {
+    public void getNumberOfResults() {
+        myRefResults.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Iterable<DataSnapshot> children = dataSnapshot.getChildren();
+                resultItems.clear();
+                Iterable<DataSnapshot> children = dataSnapshot.child(String.valueOf(position)).getChildren();
                 for (DataSnapshot child : children) {
-                    Results results = dataSnapshot.getValue(Results.class);
-                    resultList.add(0, results.getDate() + "\n\n" + results.getTime());
+                    resultsValue = child.getValue(Results.class);
+                    resultItems.add(resultsValue);
+
                 }
-                numberOfResults.setText(String.valueOf(resultList.size()));
+
+                resultNumberButton.setText(String.valueOf(resultItems.size()));
+
             }
 
             @Override
@@ -247,6 +200,12 @@ public class MainActivity extends AppCompatActivity {
                 System.out.println("Error: " + databaseError.getCode());
             }
         });
+    }
+
+    private void startResults() {
+        Intent intent = new Intent(this, ShowResults.class);
+        intent.putExtra("position", position);
+        startActivity(intent);
     }
 
 }
