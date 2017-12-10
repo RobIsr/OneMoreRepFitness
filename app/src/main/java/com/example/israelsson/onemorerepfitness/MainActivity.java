@@ -2,9 +2,13 @@ package com.example.israelsson.onemorerepfitness;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.widget.Chronometer;
 import android.widget.ImageView;
@@ -27,6 +31,13 @@ public class MainActivity extends AppCompatActivity {
     boolean isTimeActivated = false;
     Chronometer chronometer;
     int position = 0;
+    private static final int MAIN_DATA_LOADER_ID = 0;
+    private static final String WORKOUT_EXTRA_ID = "workouts";
+    private static final String TIME_EXTRA_ID = "time";
+    private static final String IS_TIME_ACTIVATED_ID = "time_active_or_not";
+    private static final String TIME_EXTRA_SAVED_BASE_ID = "base";
+    private static final String TIME_WHEN_STOPPED_EXTRA = "timestopped";
+    private static final String IS_SAVE_VISIBLE_ID = "visibleornot";
     DatabaseReference myRef;
     DatabaseReference myRefResults;
     List<Workouts> items = new ArrayList<>();
@@ -38,12 +49,24 @@ public class MainActivity extends AppCompatActivity {
     private TextView saveButton;
     private TextView yesToSave;
     private TextView resultNumberButton;
+    private long baseTime;
+    private long elapsedRealTime;
     private long timeWhenStopped = 0;
+    private boolean isSaveVisible = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+
+        Configuration config = getResources().getConfiguration();
+        if (config.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            setContentView(R.layout.activity_main);
+        } else {
+            setContentView(R.layout.activity_main_landscape);
+        }
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        getSupportActionBar().setElevation(0);
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         myRef = database.getReference().child("workouts");
@@ -52,8 +75,41 @@ public class MainActivity extends AppCompatActivity {
         getNumberOfResults();
 
         workoutTextView = (TextView) findViewById(R.id.workoutTextView);
-
         chronometer = (Chronometer) findViewById(R.id.chronometer3);
+        resetButton = (TextView) findViewById(R.id.resetButton);
+        saveButton = (TextView) findViewById(R.id.saveButton);
+
+
+        //If the device has been rotated then restore the values for the chronometer and and workout position
+        if (savedInstanceState != null) {
+            //Restore the the position so that correct workout is selected
+            position = savedInstanceState.getInt(WORKOUT_EXTRA_ID);
+            //Check if timing was activated before rotation
+            isTimeActivated = savedInstanceState.getBoolean(IS_TIME_ACTIVATED_ID);
+            //Check if the "save" TextView was visible before rotation
+            isSaveVisible = savedInstanceState.getBoolean(IS_SAVE_VISIBLE_ID);
+            timeWhenStopped = savedInstanceState.getLong(TIME_WHEN_STOPPED_EXTRA);
+            baseTime = savedInstanceState.getLong(TIME_EXTRA_SAVED_BASE_ID);
+            //If time was activated before rotation, continue counting up
+
+            if (isTimeActivated) {
+                chronometer.setBase(baseTime);
+                chronometer.start();
+                /*If not then restore the time at which timing was stopped and if the "save" TextView was visible
+                before rotation, then set to visible now again*/
+            } else {
+                chronometer.stop();
+                baseTime = SystemClock.elapsedRealtime() + timeWhenStopped;
+                chronometer.setBase(baseTime);
+                if (isSaveVisible) {
+                    resetButton.setVisibility(View.VISIBLE);
+                    saveButton.setVisibility(View.VISIBLE);
+                }
+            }
+        }
+
+
+
 
         ImageView timingButton = (ImageView) findViewById(R.id.timingButton);
         timingButton.setOnClickListener(new View.OnClickListener() {
@@ -61,16 +117,19 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 if (!isTimeActivated) {
-                    chronometer.setBase(SystemClock.elapsedRealtime() + timeWhenStopped);
+                    baseTime = SystemClock.elapsedRealtime() + timeWhenStopped;
+                    chronometer.setBase(baseTime);
                     chronometer.start();
                     isTimeActivated = true;
                 } else if (isTimeActivated) {
-                    chronometer.getBase();
                     chronometer.stop();
-                    timeWhenStopped = chronometer.getBase() - SystemClock.elapsedRealtime();
+                    chronometer.setBase(baseTime);
+                    elapsedRealTime = SystemClock.elapsedRealtime();
+                    timeWhenStopped = baseTime - elapsedRealTime;
                     isTimeActivated = false;
                     resetButton.setVisibility(View.VISIBLE);
                     saveButton.setVisibility(View.VISIBLE);
+                    isSaveVisible = true;
                 }
             }
         });
@@ -102,7 +161,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        resetButton = (TextView) findViewById(R.id.resetButton);
         resetButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -110,11 +168,12 @@ public class MainActivity extends AppCompatActivity {
                 timeWhenStopped = 0;
                 resetButton.setVisibility(View.INVISIBLE);
                 saveButton.setVisibility(View.INVISIBLE);
+                isSaveVisible = false;
+                isTimeActivated = false;
             }
         });
 
 
-        saveButton = (TextView) findViewById(R.id.saveButton);
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -131,6 +190,7 @@ public class MainActivity extends AppCompatActivity {
                         saveDialog.dismiss();
                         resetButton.setVisibility(View.INVISIBLE);
                         saveButton.setVisibility(View.INVISIBLE);
+                        isSaveVisible = false;
                     }
                 });
             }
@@ -148,6 +208,17 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    /*If device is being rotated, then save the data for the workout position and chronometer to be able
+      to restore it after rotation is complete.*/
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putInt(WORKOUT_EXTRA_ID, position);
+        outState.putLong(TIME_EXTRA_SAVED_BASE_ID, timeWhenStopped + baseTime);
+        outState.putLong(TIME_WHEN_STOPPED_EXTRA, timeWhenStopped);
+        outState.putBoolean(IS_TIME_ACTIVATED_ID, isTimeActivated);
+        outState.putBoolean(IS_SAVE_VISIBLE_ID, isSaveVisible);
+        super.onSaveInstanceState(outState);
+    }
 
     public void getFireBaseWorkouts() {
         items.clear();
@@ -202,12 +273,22 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = new MenuInflater(this);
+        inflater.inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
     private void startResults() {
         Intent intent = new Intent(this, ShowResults.class);
-        intent.putExtra("position", position);
+        intent.putExtra("workout_position", String.valueOf(position));
+        Log.d("sent", String.valueOf(position));
         startActivity(intent);
     }
 
 }
+
+
 
 

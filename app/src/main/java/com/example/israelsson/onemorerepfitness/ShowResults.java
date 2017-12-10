@@ -1,11 +1,13 @@
 package com.example.israelsson.onemorerepfitness;
 
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.widget.ListView;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.example.israelsson.onemorerepfitness.model.Results;
@@ -23,17 +25,23 @@ public class ShowResults extends AppCompatActivity implements ResultsAdapter.OnI
     int posInt;
     String position;
     ArrayList<String> resultList = new ArrayList();
-    private ListView resultListView;
     private RecyclerView resultRecyclerView;
     private ResultsAdapter adapter;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_results);
+        ActionBar actionBar = this.getSupportActionBar();
+
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setDisplayShowTitleEnabled(false);
+            actionBar.setElevation(0);
+        }
 
         //Get the workout_position from the Intent used to determine which workout is currently selected.
-        position = String.valueOf(getIntent().getIntExtra("workout_position", posInt));
-        Log.d("Recieved", position);
+        position = getIntent().getStringExtra("workout_position");
+        Log.d("recieved", position);
 
         //Initialize the FirebaseReference
         database = FirebaseDatabase.getInstance();
@@ -46,12 +54,6 @@ public class ShowResults extends AppCompatActivity implements ResultsAdapter.OnI
         resultRecyclerView.setHasFixedSize(true);
         adapter = new ResultsAdapter(resultList, this);
         resultRecyclerView.setAdapter(adapter);
-
-        /*
-        Find the ListView used to display the Results and set the Adapter to the custom result_listview_item
-        and use the resultList ArrayList to provide the content.
-        */
-
 
 
         /*
@@ -83,5 +85,15 @@ public class ShowResults extends AppCompatActivity implements ResultsAdapter.OnI
     @Override
     public void onClick(String result) {
         Toast.makeText(this, result, Toast.LENGTH_SHORT).show();
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == android.R.id.home) {
+            NavUtils.navigateUpFromSameTask(this);
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
