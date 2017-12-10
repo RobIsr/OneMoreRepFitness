@@ -4,4 +4,6 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="SEMI_TRANSPARENT_WHITE">#80ffffff</color>
+    <color name="primaryBackgroundGreen">@android:color/holo_green_light</color>
+    <color name="dark_primary">#829d24</color>
 </resources>
