@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="difficulty_labels">
+        <item name="easy_mode_label">Easy</item>
+        <item name="medium_mode_label">Moderate</item>
+        <item name="hard_mode_label">Hard</item>
+    </array>
+
+    <array name="difficulty_values">
+        <item name="easy_mode_value">easy</item>
+        <item name="medium_mode_value">moderate</item>
+        <item name="hard_mode_value">hard</item>
+    </array>
+
+</resources>

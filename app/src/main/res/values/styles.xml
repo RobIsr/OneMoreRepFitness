@@ -6,6 +6,7 @@
         <item name="colorPrimary">@color/dark_primary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
     </style>
 
     <style name="header">
@@ -13,6 +14,12 @@
         <item name="android:layout_centerHorizontal">true</item>
         <item name="android:textColor">@color/SEMI_TRANSPARENT_WHITE</item>
         <item name="android:textSize">24sp</item>
+    </style>
+
+    <style name="MyActionBarLogo" parent="@style/Widget.AppCompat.Light.ActionBar">
+        <item name="background">@color/dark_primary</item>
+        <item name="logo">@drawable/bg</item>
+        <item name="displayOptions">useLogo</item>
     </style>
 
 </resources>

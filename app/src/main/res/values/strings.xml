@@ -7,5 +7,10 @@
     <string name="content_left_arrow">Left arrow button to navigate back</string>
     <string name="content_right_arrow">Right arrow button to navigate to next</string>
     <string name="content_timing">Stopwatch image used to handle timing</string>
+    <string name="pref_difficulty_key" translatable="false">difficulty</string>
+    <string name="pref_difficulty_label">Difficulty</string>
+    <string name="easy_key" translatable="false">easy</string>
+    <string name="medium_key" translatable="false">medium</string>
+    <string name="hard_key" translatable="false">hard</string>
 
 </resources>
