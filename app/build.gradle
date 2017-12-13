@@ -24,6 +24,7 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.3-alpha', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
+    compile 'com.android.support:preference-v7:27.0.2'
     compile 'com.android.support:appcompat-v7:27.0.2'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.google.firebase:firebase-database:11.6.2'
@@ -31,6 +32,7 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:27.0.2'
     testCompile 'junit:junit:4.12'
 }
+
 
 
 

@@ -10,7 +10,8 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.example.israelsson.onemorerepfitness.model.Results;
+import com.example.israelsson.onemorerepfitness.adapters.ResultsAdapter;
+import com.example.israelsson.onemorerepfitness.models.Results;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -47,7 +48,7 @@ public class ShowResults extends AppCompatActivity implements ResultsAdapter.OnI
         database = FirebaseDatabase.getInstance();
         myRefResults = database.getReference().child("results").child(position);
 
-        resultRecyclerView = (RecyclerView) findViewById(R.id.rv_results);
+        resultRecyclerView = findViewById(R.id.rv_results);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         resultRecyclerView.setLayoutManager(layoutManager);

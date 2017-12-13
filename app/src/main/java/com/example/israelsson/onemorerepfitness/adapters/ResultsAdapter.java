@@ -1,4 +1,4 @@
-package com.example.israelsson.onemorerepfitness;
+package com.example.israelsson.onemorerepfitness.adapters;
 
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.ViewHolder;
@@ -7,6 +7,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.example.israelsson.onemorerepfitness.R;
 
 import java.util.ArrayList;
 
@@ -42,7 +44,7 @@ public class ResultsAdapter extends RecyclerView.Adapter<ResultsAdapter.ResultVi
 
         public ResultViewHolder(View itemView) {
             super(itemView);
-            resultListItem = (TextView) itemView.findViewById(R.id.tv_result_item);
+            resultListItem = itemView.findViewById(R.id.tv_result_item);
             itemView.setOnClickListener(this);
         }
 

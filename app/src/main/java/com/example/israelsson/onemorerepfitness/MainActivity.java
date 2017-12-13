@@ -2,35 +2,37 @@ package com.example.israelsson.onemorerepfitness;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Chronometer;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.israelsson.onemorerepfitness.model.Results;
-import com.example.israelsson.onemorerepfitness.model.Workouts;
+import com.example.israelsson.onemorerepfitness.models.Results;
+import com.example.israelsson.onemorerepfitness.models.Workouts;
+import com.example.israelsson.onemorerepfitness.settings.SettingsActivity;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
-    boolean isTimeActivated = false;
-    Chronometer chronometer;
-    int position = 0;
     private static final int MAIN_DATA_LOADER_ID = 0;
     private static final String WORKOUT_EXTRA_ID = "workouts";
     private static final String TIME_EXTRA_ID = "time";
@@ -38,6 +40,9 @@ public class MainActivity extends AppCompatActivity {
     private static final String TIME_EXTRA_SAVED_BASE_ID = "base";
     private static final String TIME_WHEN_STOPPED_EXTRA = "timestopped";
     private static final String IS_SAVE_VISIBLE_ID = "visibleornot";
+    boolean isTimeActivated = false;
+    Chronometer chronometer;
+    int position = 0;
     DatabaseReference myRef;
     DatabaseReference myRefResults;
     List<Workouts> items = new ArrayList<>();
@@ -65,19 +70,17 @@ public class MainActivity extends AppCompatActivity {
         } else {
             setContentView(R.layout.activity_main_landscape);
         }
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-        getSupportActionBar().setElevation(0);
 
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        FirebaseDatabase database = FirebaseDatabase.getInstance("https://onemorerepfitness-6f0e5.firebaseio.com/");
         myRef = database.getReference().child("workouts");
         myRefResults = database.getReference().child("results");
         getFireBaseWorkouts();
         getNumberOfResults();
 
-        workoutTextView = (TextView) findViewById(R.id.workoutTextView);
-        chronometer = (Chronometer) findViewById(R.id.chronometer3);
-        resetButton = (TextView) findViewById(R.id.resetButton);
-        saveButton = (TextView) findViewById(R.id.saveButton);
+        workoutTextView = findViewById(R.id.workoutTextView);
+        chronometer = findViewById(R.id.chronometer3);
+        resetButton = findViewById(R.id.resetButton);
+        saveButton = findViewById(R.id.saveButton);
 
 
         //If the device has been rotated then restore the values for the chronometer and and workout position
@@ -109,9 +112,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-
-
-        ImageView timingButton = (ImageView) findViewById(R.id.timingButton);
+        ImageView timingButton = findViewById(R.id.timingButton);
         timingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -135,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        ImageView previousButton = (ImageView) findViewById(R.id.previousWorkoutButton);
+        ImageView previousButton = findViewById(R.id.previousWorkoutButton);
         previousButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -148,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        ImageView nextButton = (ImageView) findViewById(R.id.nextWorkoutButton);
+        ImageView nextButton = findViewById(R.id.nextWorkoutButton);
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -181,7 +182,7 @@ public class MainActivity extends AppCompatActivity {
                 saveDialog.setContentView(R.layout.save_dialog);
                 saveDialog.show();
 
-                yesToSave = (TextView) saveDialog.findViewById(R.id.negativeButton);
+                yesToSave = saveDialog.findViewById(R.id.positiveButton);
                 yesToSave.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -197,7 +198,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        resultNumberButton = (TextView) findViewById(R.id.resultNumberButton);
+        resultNumberButton = findViewById(R.id.resultNumberButton);
 
         resultNumberButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -240,13 +241,24 @@ public class MainActivity extends AppCompatActivity {
             public void onCancelled(DatabaseError databaseError) {
                 System.out.println("Error: " + databaseError.getCode());
             }
+
         });
     }
 
     public void setResults() {
-        Date date = new Date();
-        Results result = new Results(chronometer.getText().toString(), date.toString(), position);
-        myRefResults.child(String.valueOf(position)).push().setValue(result);
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        String date = simpleDateFormat.format(new Date());
+
+        Results result = new Results(chronometer.getText().toString(), date);
+        DatabaseReference.CompletionListener completeListener = new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                Log.d("saved", "onComplete: ");
+            }
+        };
+        myRefResults.child(String.valueOf(position)).push().setValue(result, completeListener);
+        Log.d("result", "setResults: ");
     }
 
 
@@ -280,6 +292,24 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.settings) {
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Unregister the Activity as an OnPreferenceChangedListener to avoid any memory leaks.
+        PreferenceManager.getDefaultSharedPreferences(this)
+                .unregisterOnSharedPreferenceChangeListener(this);
+    }
+
     private void startResults() {
         Intent intent = new Intent(this, ShowResults.class);
         intent.putExtra("workout_position", String.valueOf(position));
@@ -287,6 +317,22 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    private void setupSharedPreferences() {
+        // Get all of the values from shared preferences to set it up
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        sharedPreferences.registerOnSharedPreferenceChangeListener(this);
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (key.equals(getString(R.string.easy_key))) {
+
+        } else if (key.equals(getString(R.string.medium_key))) {
+
+        } else if (key.equals(getString(R.string.hard_key))) {
+
+        }
+    }
 }
 
 
