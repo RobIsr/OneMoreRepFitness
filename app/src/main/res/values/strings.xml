@@ -13,4 +13,17 @@
     <string name="medium_key" translatable="false">medium</string>
     <string name="hard_key" translatable="false">hard</string>
 
+    <string name="easy_value" translatable="false">easy_workouts</string>
+    <string name="medium_value" translatable="false">medium_workouts</string>
+    <string name="hard_value" translatable="false">workouts</string>
+
+    <string name="easy_results_key" translatable="false">easy_result</string>
+    <string name="medium_resluts_key" translatable="false">medium_result</string>
+    <string name="hard_results_key" translatable="false">hard_result</string>
+
+    <string name="easy_results_value" translatable="false">easy_results</string>
+    <string name="medium_results_value" translatable="false">medium_results</string>
+    <string name="hard_results_value" translatable="false">results</string>
+
+
 </resources>

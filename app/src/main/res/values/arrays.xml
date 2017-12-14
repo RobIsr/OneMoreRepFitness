@@ -7,9 +7,21 @@
     </array>
 
     <array name="difficulty_values">
-        <item name="easy_mode_value">easy</item>
-        <item name="medium_mode_value">moderate</item>
-        <item name="hard_mode_value">hard</item>
+        <item name="easy_mode_value">@string/easy_value</item>
+        <item name="medium_mode_value">@string/medium_value</item>
+        <item name="hard_mode_value">@string/hard_value</item>
+    </array>
+
+    <array name="results_labels">
+        <item name="easy_mode_label">Easy</item>
+        <item name="medium_mode_label">Moderate</item>
+        <item name="hard_mode_label">Hard</item>
+    </array>
+
+    <array name="results_values">
+        <item name="easy_mode_value">@string/easy_results_value</item>
+        <item name="medium_mode_value">@string/medium_results_value</item>
+        <item name="hard_mode_value">@string/hard_results_value</item>
     </array>
 
 </resources>
