@@ -33,9 +33,8 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
-    private static final int MAIN_DATA_LOADER_ID = 0;
+
     private static final String WORKOUT_EXTRA_ID = "workouts";
-    private static final String TIME_EXTRA_ID = "time";
     private static final String IS_TIME_ACTIVATED_ID = "time_active_or_not";
     private static final String TIME_EXTRA_SAVED_BASE_ID = "base";
     private static final String TIME_WHEN_STOPPED_EXTRA = "timestopped";
@@ -49,6 +48,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     List<Results> resultItems = new ArrayList<>();
     Workouts value;
     Results resultsValue;
+    FirebaseDatabase database = FirebaseDatabase.getInstance("https://onemorerepfitness-6f0e5.firebaseio.com/");
     private TextView workoutTextView;
     private TextView resetButton;
     private TextView saveButton;
@@ -58,7 +58,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     private long elapsedRealTime;
     private long timeWhenStopped = 0;
     private boolean isSaveVisible = false;
-
+    private String mResultsRef = "";
+    private String mWorkoutRefChild = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,12 +72,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             setContentView(R.layout.activity_main_landscape);
         }
 
-        FirebaseDatabase database = FirebaseDatabase.getInstance("https://onemorerepfitness-6f0e5.firebaseio.com/");
-        myRef = database.getReference().child("workouts");
-        myRefResults = database.getReference().child("results");
-        getFireBaseWorkouts();
-        getNumberOfResults();
-
+        setupSharedPreferences();
+        //getNumberOfResults();
         workoutTextView = findViewById(R.id.workoutTextView);
         chronometer = findViewById(R.id.chronometer3);
         resetButton = findViewById(R.id.resetButton);
@@ -140,7 +137,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         previousButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(position > 0) {
+                if (position > 0) {
                     position--;
                     getFireBaseWorkouts();
                     getNumberOfResults();
@@ -232,7 +229,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                     items.add(value);
                 }
 
-
                 workoutTextView.setText(items.get(position).getDescription().toUpperCase() + "\n" + items.get(position).getExersize_1() + "\n" + items.get(position).getExersize_2()
                         + "\n" + items.get(position).getExersize_3() + "\n" + items.get(position).getExersize_4());
             }
@@ -313,6 +309,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     private void startResults() {
         Intent intent = new Intent(this, ShowResults.class);
         intent.putExtra("workout_position", String.valueOf(position));
+        intent.putExtra("result_difficulty", mResultsRef);
         Log.d("sent", String.valueOf(position));
         startActivity(intent);
     }
@@ -320,18 +317,39 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     private void setupSharedPreferences() {
         // Get all of the values from shared preferences to set it up
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        Log.d("key2", sharedPreferences.getString(getString(R.string.pref_difficulty_key), getString(R.string.easy_key)));
+        setWorkoutDifficulty(sharedPreferences);
         sharedPreferences.registerOnSharedPreferenceChangeListener(this);
     }
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (key.equals(getString(R.string.easy_key))) {
-
-        } else if (key.equals(getString(R.string.medium_key))) {
-
-        } else if (key.equals(getString(R.string.hard_key))) {
-
+        if (key.equals(getString(R.string.pref_difficulty_key))) {
+            setWorkoutDifficulty(sharedPreferences);
         }
+    }
+
+    private void setWorkoutDifficulty(SharedPreferences sharedPreferences) {
+        Log.d("key", sharedPreferences.getString(getString(R.string.pref_difficulty_key), getString(R.string.easy_key)));
+        mWorkoutRefChild = sharedPreferences.getString(getString(R.string.pref_difficulty_key), getString(R.string.easy_key));
+        myRef = database.getReference().child(mWorkoutRefChild);
+        getFireBaseWorkouts();
+
+        switch (mWorkoutRefChild) {
+            case "easy_workouts":
+                mResultsRef = "easy_results";
+                break;
+            case "medium_workouts":
+                mResultsRef = "medium_results";
+                break;
+            case "workouts":
+                mResultsRef = "results";
+                break;
+        }
+
+        myRefResults = database.getReference().child(mResultsRef);
+        getNumberOfResults();
+
     }
 }
 

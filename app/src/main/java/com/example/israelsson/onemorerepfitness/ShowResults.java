@@ -28,6 +28,7 @@ public class ShowResults extends AppCompatActivity implements ResultsAdapter.OnI
     ArrayList<String> resultList = new ArrayList();
     private RecyclerView resultRecyclerView;
     private ResultsAdapter adapter;
+    private String mResultReference;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,11 +43,12 @@ public class ShowResults extends AppCompatActivity implements ResultsAdapter.OnI
 
         //Get the workout_position from the Intent used to determine which workout is currently selected.
         position = getIntent().getStringExtra("workout_position");
-        Log.d("recieved", position);
+        mResultReference = getIntent().getStringExtra("result_difficulty");
+        Log.d("recieved", position + mResultReference);
 
         //Initialize the FirebaseReference
         database = FirebaseDatabase.getInstance();
-        myRefResults = database.getReference().child("results").child(position);
+        myRefResults = database.getReference().child(mResultReference).child(position);
 
         resultRecyclerView = findViewById(R.id.rv_results);
 

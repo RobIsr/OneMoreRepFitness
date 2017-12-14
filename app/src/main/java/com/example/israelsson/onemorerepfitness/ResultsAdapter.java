@@ -11,13 +11,8 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 public class ResultsAdapter extends RecyclerView.Adapter<ResultsAdapter.ResultViewHolder> {
-    ArrayList resultItems = new ArrayList();
+    private ArrayList resultItems = new ArrayList();
     private OnItemClickHandler handler;
-
-    public ResultsAdapter(ArrayList resultItems, OnItemClickHandler clickHandler) {
-        this.resultItems = resultItems;
-        this.handler = clickHandler;
-    }
 
     public ResultViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
@@ -40,7 +35,7 @@ public class ResultsAdapter extends RecyclerView.Adapter<ResultsAdapter.ResultVi
     class ResultViewHolder extends ViewHolder implements OnClickListener {
         TextView resultListItem;
 
-        public ResultViewHolder(View itemView) {
+        ResultViewHolder(View itemView) {
             super(itemView);
             resultListItem = itemView.findViewById(R.id.tv_result_item);
             itemView.setOnClickListener(this);
