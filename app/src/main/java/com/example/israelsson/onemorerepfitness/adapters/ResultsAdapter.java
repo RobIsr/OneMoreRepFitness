@@ -36,7 +36,7 @@ public class ResultsAdapter extends RecyclerView.Adapter<ResultsAdapter.ResultVi
     }
 
     public interface OnItemClickHandler {
-        void onClick(String str);
+        void onClick(View str);
     }
 
     class ResultViewHolder extends ViewHolder implements OnClickListener {
@@ -53,7 +53,7 @@ public class ResultsAdapter extends RecyclerView.Adapter<ResultsAdapter.ResultVi
         }
 
         public void onClick(View v) {
-            ResultsAdapter.this.handler.onClick(resultListItem.getText().toString());
+            ResultsAdapter.this.handler.onClick(v);
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.example.israelsson.onemorerepfitness;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
@@ -8,6 +9,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.example.israelsson.onemorerepfitness.adapters.ResultsAdapter;
@@ -29,6 +32,7 @@ public class ShowResults extends AppCompatActivity implements ResultsAdapter.OnI
     private RecyclerView resultRecyclerView;
     private ResultsAdapter adapter;
     private String mResultReference;
+    private int mResultPosition;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,7 +42,7 @@ public class ShowResults extends AppCompatActivity implements ResultsAdapter.OnI
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setDisplayShowTitleEnabled(false);
-            actionBar.setElevation(0);
+            actionBar.setElevation(10);
         }
 
         //Get the workout_position from the Intent used to determine which workout is currently selected.
@@ -86,8 +90,27 @@ public class ShowResults extends AppCompatActivity implements ResultsAdapter.OnI
     }
 
     @Override
-    public void onClick(String result) {
-        Toast.makeText(this, result, Toast.LENGTH_SHORT).show();
+    public void onClick(View v) {
+        final View deleteView = v;
+        final ImageButton deleteButton = v.findViewById(R.id.deleteButton);
+
+        if (deleteButton.getVisibility() == View.VISIBLE) {
+            deleteView.setBackgroundColor(Color.TRANSPARENT);
+            deleteButton.setVisibility(View.INVISIBLE);
+        } else {
+            deleteView.setBackgroundColor(Color.RED);
+            deleteButton.setVisibility(View.VISIBLE);
+            deleteButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (view == deleteButton) {
+                        Toast.makeText(getApplicationContext(), "Will be deleted", Toast.LENGTH_SHORT).show();
+                        deleteButton.setVisibility(View.INVISIBLE);
+                        deleteView.setBackgroundColor(Color.TRANSPARENT);
+                    }
+                }
+            });
+        }
     }
 
 
