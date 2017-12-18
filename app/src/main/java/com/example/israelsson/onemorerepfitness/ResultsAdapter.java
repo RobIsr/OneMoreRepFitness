@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -29,16 +30,17 @@ public class ResultsAdapter extends RecyclerView.Adapter<ResultsAdapter.ResultVi
     }
 
     public interface OnItemClickHandler {
-        void onClick(String str);
+        void onClick(View v);
     }
 
     class ResultViewHolder extends ViewHolder implements OnClickListener {
         TextView resultListItem;
+        ImageButton button;
 
         ResultViewHolder(View itemView) {
             super(itemView);
-            resultListItem = itemView.findViewById(R.id.tv_result_item);
-            itemView.setOnClickListener(this);
+            button = itemView.findViewById(R.id.deleteButton);
+            button.setOnClickListener(this);
         }
 
         void bind(int position) {
@@ -46,7 +48,7 @@ public class ResultsAdapter extends RecyclerView.Adapter<ResultsAdapter.ResultVi
         }
 
         public void onClick(View v) {
-            ResultsAdapter.this.handler.onClick(resultListItem.getText().toString());
+            ResultsAdapter.this.handler.onClick(v);
         }
     }
 }

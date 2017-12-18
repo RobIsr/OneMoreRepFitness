@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.PreferenceManager;
 import android.util.Log;
@@ -64,6 +65,13 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        ActionBar actionBar = this.getSupportActionBar();
+
+        if (actionBar != null) {
+            actionBar.setDisplayShowTitleEnabled(false);
+            actionBar.setElevation(10);
+        }
 
         Configuration config = getResources().getConfiguration();
         if (config.orientation == Configuration.ORIENTATION_PORTRAIT) {
@@ -348,6 +356,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         }
 
         myRefResults = database.getReference().child(mResultsRef);
+        position = 0;
         getNumberOfResults();
 
     }
