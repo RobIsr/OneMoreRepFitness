@@ -59,8 +59,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     private long elapsedRealTime;
     private long timeWhenStopped = 0;
     private boolean isSaveVisible = false;
-    private String mResultsRef = "";
-    private String mWorkoutRefChild = "";
+    private String mResultsRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,7 +80,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         }
 
         setupSharedPreferences();
-        //getNumberOfResults();
+
         workoutTextView = findViewById(R.id.workoutTextView);
         chronometer = findViewById(R.id.chronometer3);
         resetButton = findViewById(R.id.resetButton);
@@ -325,7 +324,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     private void setupSharedPreferences() {
         // Get all of the values from shared preferences to set it up
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        Log.d("key2", sharedPreferences.getString(getString(R.string.pref_difficulty_key), getString(R.string.easy_key)));
         setWorkoutDifficulty(sharedPreferences);
         sharedPreferences.registerOnSharedPreferenceChangeListener(this);
     }
@@ -338,8 +336,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     }
 
     private void setWorkoutDifficulty(SharedPreferences sharedPreferences) {
-        Log.d("key", sharedPreferences.getString(getString(R.string.pref_difficulty_key), getString(R.string.easy_key)));
-        mWorkoutRefChild = sharedPreferences.getString(getString(R.string.pref_difficulty_key), getString(R.string.easy_key));
+        position = 0;
+        String mWorkoutRefChild = sharedPreferences.getString(getString(R.string.pref_difficulty_key), getString(R.string.easy_value));
         myRef = database.getReference().child(mWorkoutRefChild);
         getFireBaseWorkouts();
 
@@ -354,9 +352,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 mResultsRef = "results";
                 break;
         }
-
         myRefResults = database.getReference().child(mResultsRef);
-        position = 0;
         getNumberOfResults();
 
     }
